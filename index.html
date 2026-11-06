@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#edf4ff">
+<title>漢字の ぴったり度｜小学3年生・第7号</title>
+<!-- UDデジタル教科書体は利用者端末にインストール済みの場合のみ参照。フォントファイルは同梱しません。 -->
+<style>
+@font-face {
+  font-family:"LocalSchoolUD";
+  src:local("UD デジタル 教科書体 NP-R"),local("UD デジタル 教科書体 N-R"),
+      local("UD デジタル 教科書体 NK-R"),local("UD デジタル 教科書体 NP"),
+      local("UD デジタル 教科書体 N"),local("UD デジタル 教科書体 NK"),
+      local("UD Digi Kyokasho NP-R"),local("UD Digi Kyokasho N-R"),local("UD Digi Kyokasho NK-R");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+:root{--navy:#19324c;--blue:#1265bb;--mist:#edf4ff;--border:#bdd1e8;--muted:#536b82;--orange:#fff3d8;--success:#e9f7f0}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{font-family:system-ui,-apple-system,"Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif;background:var(--mist);color:var(--navy);line-height:1.5}
+main{max-width:760px;margin:auto;padding:16px 12px 38px}header{text-align:center;margin:0 0 14px}
+.eyebrow{color:#356da2;font-size:13px;font-weight:750;letter-spacing:.07em}h1{margin:2px 0 4px;font-size:clamp(25px,5vw,33px)}header p{margin:0;color:var(--muted);font-size:14px}
+.panel{background:white;border:1px solid #d5e4f5;border-radius:20px;padding:17px;box-shadow:0 8px 28px #26496312}
+.step{font-weight:850;font-size:18px;margin:0 0 7px}.input-area{background:#f4f9ff;border:1px solid #d6e5f8;padding:12px;border-radius:13px}
+.input-row{display:flex;gap:8px;align-items:stretch}
+input{min-width:0;flex:1;padding:10px 12px;min-height:49px;border:2px solid #afc7e1;border-radius:10px;font:inherit;font-size:19px;background:white;color:#17324e}
+button{cursor:pointer;font:inherit;font-weight:800;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offset:2px}
+.btn{border:2px solid var(--border);background:#f3f8ff;color:#18517e;border-radius:12px;padding:8px 13px;min-height:48px}
+.btn:active,.chip:active{transform:translateY(1px)}.btn-primary{background:#1361b8;color:white;border-color:#1361b8}
+.btn-judge{width:100%;font-size:clamp(17px,4vw,22px);min-height:61px}
+.help{font-size:13px;margin:8px 0 0;color:var(--muted)}.choices{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.chip{background:white;border:2px solid #adc3dd;border-radius:11px;min-width:52px;min-height:52px;padding:3px 9px;font:750 29px "Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans CJK JP",sans-serif;color:#214a70}
+.chip[aria-pressed="true"]{border-color:#1265bb;background:#dceeff;box-shadow:inset 0 0 0 1px #1265bb}
+.chosen{text-align:center;font-size:15px;margin:12px 0 4px}.chosen b{font-size:27px;color:#105eaa;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans CJK JP",sans-serif;font-weight:800}
+.instruction{text-align:center;font-weight:850;margin:13px 0 9px;font-size:17px}
+.board-wrap{display:flex;justify-content:center}.board{width:min(100%,410px);aspect-ratio:1;position:relative;background:white;border:3px solid #58789d;border-radius:5px;overflow:hidden}
+.board canvas{position:absolute;inset:0;width:100%;height:100%}#ink{touch-action:none;cursor:crosshair}#grid,#overlay{pointer-events:none}
+.actions{max-width:460px;margin:11px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#judgeBtn{grid-column:1/-1}#toggleBtn{grid-column:1/-1}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:10px 0;font-size:13px;color:#526b84}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:4px}.dot.black{background:#1b2738}.dot.blue{background:#1375d1;opacity:.5}
+.status{text-align:center;min-height:24px;font-size:14px;color:#305778;margin:10px 0}
+.result{max-width:490px;margin:12px auto 0;border:1px solid #bad5f1;border-radius:14px;background:#ecf5ff;padding:14px;text-align:center}
+.score-heading{font-size:15px;font-weight:750;margin:0;color:#315577}.score{font-size:clamp(45px,10vw,66px);line-height:1.2;font-weight:900;letter-spacing:-.035em;color:#115cad;font-variant-numeric:tabular-nums}
+.score span{font-size:25px;margin-left:2px}.message{font-weight:700;margin:6px 0 12px}
+.meter{height:14px;background:#d0e1f2;border-radius:100px;overflow:hidden}.meter>div{height:100%;width:0;background:#2775c9;border-radius:100px;transition:width .4s ease}
+.advice{background:#fff;border-radius:13px;padding:14px 12px;margin:11px 0 0;text-align:left}.advice-title{font-weight:850;color:#1d5482;margin:0 0 5px;font-size:16px}.advice p:not(.advice-title){margin:5px 0;font-weight:650;font-size:16px;line-height:1.65}.advice #adviceSub{color:#536b82;font-size:14px;font-weight:550}
+.result-note{font-size:12px;color:#516c84;margin:7px 0 0}
+.details{margin:12px 0 0;background:#fff;padding:10px 12px;border-radius:10px;text-align:left;font-size:14px}.details summary{cursor:pointer;color:#245d94;font-weight:750}.detail-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #e1eaf3}.detail-row span:nth-child(2){white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:750}.marker-legend{font-size:13px;color:#4a627f;text-align:center;margin-top:6px}.marker-legend .start{color:#18885a;font-weight:850}.marker-legend .end{color:#ba5c0b;font-weight:850}
+.font-state{margin-top:15px;background:#edf5fe;border-radius:11px;padding:11px 12px;font-size:13px;color:#385c80}.font-state.warning{background:var(--orange);color:#765313}
+.note{font-size:13px;color:#56708a;border-top:1px solid #dfebf7;margin-top:17px;padding-top:12px}
+.hidden{display:none!important}
+@media(max-width:520px){main{padding:10px 8px 25px}.panel{padding:11px;border-radius:14px}.input-row{flex-wrap:wrap}.input-row input{width:100%;flex:auto}.input-row button{width:100%}.btn{font-size:15px}.btn-judge{font-size:19px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="eyebrow">小学校３年生・漢字れんしゅう</div><h1>かんじを かさねて くらべよう！</h1><p>ゆびで かいて　おてほんと ぴったり くらべよう</p></header>
+<section class="panel">
+ <div class="input-area">
+  <label class="step" for="kanjiInput">① れんしゅうする 漢字を いれよう</label>
+  <div class="input-row"><input type="text" id="kanjiInput" value="十 木 森 橋 漢" placeholder="例：十 木 森 橋 漢" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="inputHelp"><button type="button" id="setBtn" class="btn btn-primary">この漢字で れんしゅう</button></div>
+  <p class="help" id="inputHelp">キーボードで １字でも 何字でも 入れられるよ。下の漢字を おして えらぼう。</p>
+  <div class="choices" id="choices" aria-label="れんしゅうする漢字"></div>
+ </div>
+ <div class="chosen">いま かく字（角ゴシック体）：<b id="chosenText">十</b></div>
+ <div class="instruction">② マスの なかに ゆびで かこう</div>
+ <div class="board-wrap"><div class="board"><canvas id="grid" width="512" height="512" aria-hidden="true"></canvas><canvas id="ink" width="512" height="512" aria-label="漢字を指で書く正方形のマス"></canvas><canvas id="overlay" width="512" height="512" aria-hidden="true"></canvas></div></div>
+ <div class="instruction">③ ボタンを おして くらべよう</div>
+ <div class="actions"><button type="button" id="judgeBtn" class="btn btn-primary btn-judge">おてほんと かさねて ％を みる</button><button type="button" id="undoBtn" class="btn">１かく もどす</button><button type="button" id="clearBtn" class="btn">ぜんぶ けす</button><button type="button" id="toggleBtn" class="btn hidden">おてほんを かくす</button></div>
+ <div class="legend"><span><i class="dot black"></i>じぶんの字</span><span><i class="dot blue"></i>おてほん（半とうめい50％）</span></div>
+ <p class="marker-legend hidden" id="markerLegend"><span class="start">● 緑＝各画のかきはじめ</span>　<span class="end">● オレンジ＝各画のかきおわり</span></p>
+ <p id="status" class="status" role="status" aria-live="polite">漢字を えらんで マスに かいてね。</p>
+ <div id="result" class="result hidden" role="status" aria-live="polite">
+  <p class="score-heading">おてほんとの ぴったり度（めやす）</p>
+  <div class="score"><span id="scoreValue" style="font-size:inherit">0</span><span>％</span></div>
+  <div class="meter" role="progressbar" aria-label="ぴったり度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="scoreMeter"><div id="scoreBar"></div></div>
+  <p id="scoreMessage" class="message"></p><p id="guideNote" class="result-note"></p>
+  <div class="advice"><p class="advice-title">つぎは ここを なおそう！</p><p id="adviceMain"></p><p id="adviceSub"></p></div>
+  <details class="details"><summary>さいてんの ないようを みる（先生と いっしょに）</summary><div id="detailRows"></div><p class="result-note">※ 筆画データが使える字は7項目で判定します。使えない字は形・位置・重なりを参考にした簡易判定となり、始点・終点・書き順・とめ・はねの正誤は採点しません。</p></details>
+ </div>
+ <div class="font-state" id="fontState" role="status" aria-live="polite">書体を かくにん中です。</div>
+ <div class="note">先生向け：通信できない場合も「字形の簡易判定」で必ず結果を表示します。<b>筆画資料のある字：</b>始点・終点25、部品の配置20、とめ・はね・はらい20、縦横の方向15、線の長さ・接し方10、画数・筆順5、線の重なり5＝100点（いずれも自動推定）。<b>資料のない字：</b>位置・バランス40、線の重なり40、字全体の大きさ20＝100点（簡易判定）。この場合は始点・終点、筆順、とめ・はね・はらいの良否は評価していません。使用する筆画資料：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener noreferrer">KanjiVG</a>（© Ulrich Apel, CC BY-SA 3.0）。文字は保存・送信しません。UDデジタル教科書体は端末にある場合のみ使用し、ない場合は代替書体を表示します。始点・終点の印は筆画資料の座標を見本の描画線に吸着させた参考位置です。字体と筆画データの違いによる誤差は残ります。</div>
+</section>
+</main>
+<script>
+(()=>{'use strict';
+const SIZE=512, el=id=>document.getElementById(id), ink=el('ink'), inkCtx=ink.getContext('2d',{willReadFrequently:true}), overlayCtx=el('overlay').getContext('2d'), grid=el('grid').getContext('2d');
+let lesson=['十','木','森','橋','漢'], selected='十', strokes=[], active=null, pointerId=null, refCanvas=null, visible=false, shownGuides=null, fontChoice='"Yu Mincho",serif', fontReady=false;
+const GRID_COLOR='#d6e1ef', INK_COLOR='#1b2738', REF_COLOR='#1375d1';
+function status(s){el('status').textContent=s}
+function show(id,yes){el(id).classList.toggle('hidden',!yes)}
+function parseKanji(raw){return [...new Set([...raw].filter(c=>/\p{Script=Han}/u.test(c)))].slice(0,40)}
+function drawGrid(){grid.clearRect(0,0,SIZE,SIZE);grid.strokeStyle=GRID_COLOR;grid.lineWidth=2;grid.setLineDash([11,12]);grid.beginPath();grid.moveTo(SIZE/2,0);grid.lineTo(SIZE/2,SIZE);grid.moveTo(0,SIZE/2);grid.lineTo(SIZE,SIZE/2);grid.stroke();grid.setLineDash([])}
+drawGrid();
+function pointFromEvent(e){const r=ink.getBoundingClientRect();return [Math.max(0,Math.min(SIZE,(e.clientX-r.left)*SIZE/r.width)),Math.max(0,Math.min(SIZE,(e.clientY-r.top)*SIZE/r.height))]}
+function drawDot(p){inkCtx.fillStyle=INK_COLOR;inkCtx.beginPath();inkCtx.arc(p[0],p[1],6,0,2*Math.PI);inkCtx.fill()}
+function drawLine(a,b){inkCtx.strokeStyle=INK_COLOR;inkCtx.lineWidth=12;inkCtx.lineCap='round';inkCtx.lineJoin='round';inkCtx.beginPath();inkCtx.moveTo(a[0],a[1]);inkCtx.lineTo(b[0],b[1]);inkCtx.stroke()}
+function hideResult(){show('result',false);show('toggleBtn',false);show('markerLegend',false);shownGuides=null;visible=false;overlayCtx.clearRect(0,0,SIZE,SIZE)}
+function redrawInk(){inkCtx.clearRect(0,0,SIZE,SIZE);for(const s of strokes){drawDot(s[0]);for(let i=1;i<s.length;i++)drawLine(s[i-1],s[i])}}
+function clearInk(message='マスの なかに ゆびで かいてね。'){strokes=[];active=null;pointerId=null;inkCtx.clearRect(0,0,SIZE,SIZE);hideResult();status(message)}
+ink.addEventListener('pointerdown',e=>{if(active||!e.isPrimary)return;e.preventDefault();hideResult();pointerId=e.pointerId;try{ink.setPointerCapture(pointerId)}catch(_e){}active=[pointFromEvent(e)];drawDot(active[0])});
+ink.addEventListener('pointermove',e=>{if(!active||e.pointerId!==pointerId)return;e.preventDefault();const events=typeof e.getCoalescedEvents==='function'?e.getCoalescedEvents():[];for(const sample of (events.length?events:[e])){const p=pointFromEvent(sample),prev=active[active.length-1];if(Math.hypot(p[0]-prev[0],p[1]-prev[1])<1.1)continue;active.push(p);drawLine(prev,p)}});
+function finishStroke(e,save=true){if(!active||e.pointerId!==pointerId)return;e.preventDefault();if(save){const p=pointFromEvent(e),prev=active[active.length-1];if(Math.hypot(p[0]-prev[0],p[1]-prev[1])>2){active.push(p);drawLine(prev,p)}strokes.push(active);status('かけたね！ ％の ボタンを おそう。')}else{redrawInk();status('もう一度 かいてみよう。')}active=null;pointerId=null}
+ink.addEventListener('pointerup',e=>finishStroke(e,true));ink.addEventListener('pointercancel',e=>finishStroke(e,false));
+el('undoBtn').addEventListener('click',()=>{if(active)return;strokes.pop();redrawInk();hideResult();status('１かく もどしたよ。')});
+el('clearBtn').addEventListener('click',()=>clearInk());
+function renderChoices(){const wrap=el('choices');wrap.replaceChildren();for(const ch of lesson){const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=ch;b.setAttribute('aria-label',ch+'を練習する');b.setAttribute('aria-pressed',String(ch===selected));b.addEventListener('click',()=>selectKanji(ch));wrap.append(b)}el('chosenText').textContent=selected}
+function selectKanji(ch){selected=ch;refCanvas=null;renderChoices();clearInk('「'+ch+'」を マスの なかに かこう。')}
+function applyInput(){const chars=parseKanji(el('kanjiInput').value);if(!chars.length){status('漢字を １字 いじょう 入れてね。');el('kanjiInput').focus();return}lesson=chars;selectKanji(lesson[0]);status('漢字を '+chars.length+'字 セットしたよ。えらんで かいてね。')}
+el('setBtn').addEventListener('click',applyInput);
+el('kanjiInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();applyInput()}});
+function fontSample(font){const c=document.createElement('canvas');c.width=190;c.height=190;const x=c.getContext('2d',{willReadFrequently:true});x.font='130px '+font;x.textAlign='center';x.textBaseline='middle';x.fillStyle='#000';x.fillText('永',95,99);return x.getImageData(0,0,190,190).data}
+function fontDiff(a,b){let n=0;for(let i=3;i<a.length;i+=4)if(Math.abs(a[i]-b[i])>35)n++;return n>75}
+async function setupFont(){const state=el('fontState');let available=false;
+  try{await document.fonts.load('400 120px "LocalSchoolUD"','永');available=fontDiff(fontSample('"LocalSchoolUD",serif'),fontSample('serif'))}catch(_e){}
+  if(available){fontChoice='"LocalSchoolUD",serif';state.classList.remove('warning');state.textContent='おてほん：UDデジタル教科書体（この端末のフォントを使用）'}
+  else{fontChoice='"Yu Mincho","Hiragino Mincho ProN",serif';state.classList.add('warning');state.textContent='この端末では「UDデジタル教科書体」を確認できません。現在は代替書体を使用中です。UD教科書体で正確に重ねるには、端末への正規インストールまたは利用許諾されたWebフォントが必要です。'}
+  fontReady=true;refCanvas=null;
+}
+function makeReference(ch){const orig=document.createElement('canvas');orig.width=SIZE;orig.height=SIZE;const origCtx=orig.getContext('2d',{willReadFrequently:true});origCtx.font='400 425px '+fontChoice;origCtx.textAlign='center';origCtx.textBaseline='middle';origCtx.fillStyle=REF_COLOR;origCtx.fillText(ch,SIZE/2,SIZE/2+23);
+  const data=origCtx.getImageData(0,0,SIZE,SIZE).data;let xMin=SIZE,yMin=SIZE,xMax=-1,yMax=-1;
+  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){if(data[(y*SIZE+x)*4+3]<26)continue;if(x<xMin)xMin=x;if(x>xMax)xMax=x;if(y<yMin)yMin=y;if(y>yMax)yMax=y}
+  if(xMax<0)return null;
+  const w=xMax-xMin+1,h=yMax-yMin+1,scale=Math.min(380/w,380/h),target=document.createElement('canvas');target.width=SIZE;target.height=SIZE;
+  const t=target.getContext('2d',{willReadFrequently:true});t.drawImage(orig,xMin,yMin,w,h,(SIZE-w*scale)/2,(SIZE-h*scale)/2,w*scale,h*scale);return target
+}
+function drawOverlay(){
+ overlayCtx.clearRect(0,0,SIZE,SIZE);if(!visible||!refCanvas)return;
+ overlayCtx.save();overlayCtx.globalAlpha=.5;overlayCtx.drawImage(refCanvas,0,0);overlayCtx.restore();
+ if(shownGuides){
+  for(const guide of shownGuides){const start=guide[0],end=guide.at(-1);for(const [point,color] of [[start,'#1d9e70'],[end,'#f08a24']]){overlayCtx.beginPath();overlayCtx.fillStyle=color;overlayCtx.strokeStyle='white';overlayCtx.lineWidth=2.5;overlayCtx.arc(point[0],point[1],6.2,0,2*Math.PI);overlayCtx.fill();overlayCtx.stroke()}}
+ }
+}
+el('toggleBtn').addEventListener('click',()=>{visible=!visible;drawOverlay();show('markerLegend',visible&&!!shownGuides);el('toggleBtn').textContent=visible?'おてほんを かくす':'おてほんを みせる'});
+function bitmap(context){const a=context.getImageData(0,0,SIZE,SIZE).data,m=new Uint8Array(SIZE*SIZE);let count=0;for(let i=0;i<m.length;i++){if(a[i*4+3]>72){m[i]=1;count++}}return {m,count}}
+// 近傍8方向の最短距離を2回の走査で近似（画素ごとの線への距離）。
+function distanceMap(mask){const W=SIZE,N=W*W, d=new Float32Array(N),DIAG=Math.SQRT2;for(let i=0;i<N;i++)d[i]=mask[i]?0:9999;
+ for(let y=0;y<W;y++)for(let x=0;x<W;x++){const i=y*W+x;let v=d[i];if(x>0)v=Math.min(v,d[i-1]+1);if(y>0){v=Math.min(v,d[i-W]+1);if(x>0)v=Math.min(v,d[i-W-1]+DIAG);if(x<W-1)v=Math.min(v,d[i-W+1]+DIAG)}d[i]=v}
+ for(let y=W-1;y>=0;y--)for(let x=W-1;x>=0;x--){const i=y*W+x;let v=d[i];if(x<W-1)v=Math.min(v,d[i+1]+1);if(y<W-1){v=Math.min(v,d[i+W]+1);if(x>0)v=Math.min(v,d[i+W-1]+DIAG);if(x<W-1)v=Math.min(v,d[i+W+1]+DIAG)}d[i]=v}
+ return d}
+// 3pxまで満点、それ以降は最大26pxのずれまで段階的に減点。
+function closeness(d){return d<=3?1:Math.max(0,1-(d-3)/23)}
+// 「40・40・20」方式：配置40、字形の重なり40、画の終わり方20。
+// 部首の名称をAIで認識するわけではなく、字の左右・上下の領域にある線の分布を比較する。
+function maskStats(bitmapValue){
+ const {m,count}=bitmapValue, cells=new Float64Array(16), quad=new Float64Array(4);
+ let minX=SIZE,minY=SIZE,maxX=0,maxY=0,sumX=0,sumY=0;
+ if(!count)return {cells,quad,box:[0,0,0,0],center:[0,0],left:0,top:0};
+ for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){if(!m[y*SIZE+x])continue;
+  const col=Math.min(3,Math.floor(x/(SIZE/4))),row=Math.min(3,Math.floor(y/(SIZE/4)));
+  cells[row*4+col]++;quad[(y>=SIZE/2?2:0)+(x>=SIZE/2?1:0)]++;
+  minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);sumX+=x;sumY+=y;
+ }
+ for(let i=0;i<16;i++)cells[i]/=count;
+ for(let i=0;i<4;i++)quad[i]/=count;
+ return {cells,quad,box:[minX,minY,maxX,maxY],center:[sumX/count,sumY/count],left:quad[0]+quad[2],top:quad[0]+quad[1]};
+}
+function cap01(x){return Math.min(1,Math.max(0,x))}
+function vectorSimilarity(a,b){let difference=0;for(let i=0;i<a.length;i++)difference+=Math.abs(a[i]-b[i]);return cap01(1-difference/2)}
+function getStructureScore(own,ideal){
+ const a=maskStats(own),b=maskStats(ideal);
+ const cells=vectorSimilarity(a.cells,b.cells),quads=vectorSimilarity(a.quad,b.quad);
+ const centerDistance=Math.hypot(a.center[0]-b.center[0],a.center[1]-b.center[1]);
+ const center=cap01(1-centerDistance/150);
+ let bboxDifference=0;for(let i=0;i<4;i++)bboxDifference+=Math.abs(a.box[i]-b.box[i]);
+ const bbox=cap01(1-bboxDifference/460);
+ const score=100*(.40*cells+.20*quads+.20*center+.20*bbox);
+ return {score,own:a,ideal:b};
+}
+// KanjiVGの筆画データを読み込み、UD教科書体の見本と同じ枠に正規化する。
+// 構造を単純化した練習用の手作りモデル。ネット接続なしでも一部の字を試せる。
+const DEMO={
+ '一': [[[13,52],[94,50]]],
+ '二': [[[22,31],[83,30]],[[14,78],[93,77]]],
+ '三': [[[23,21],[81,20]],[[27,53],[77,52]],[[14,91],[94,90]]],
+ '十': [[[17,40],[92,40]],[[55,12],[55,96]]],
+ '上': [[[50,12],[50,79]],[[52,51],[82,50]],[[17,88],[92,87]]],
+ '下': [[[16,25],[94,23]],[[53,24],[53,95]],[[54,60],[83,78]]],
+ '川': [[[27,18],[20,88]],[[51,17],[51,88]],[[81,15],[81,92]]],
+ '山': [[[51,13],[51,87]],[[22,45],[22,89],[86,89]],[[86,43],[86,88]]],
+ '口': [[[19,21],[20,88]],[[20,22],[88,21],[87,88]],[[20,87],[87,87]]],
+ '日': [[[19,13],[19,94]],[[19,14],[88,14],[88,92]],[[19,54],[88,54]],[[19,92],[88,92]]],
+ '田': [[[18,15],[19,94]],[[19,16],[89,15],[88,95]],[[53,17],[53,92]],[[20,55],[88,55]],[[19,92],[88,92]]],
+ '人': [[[54,16],[48,34],[35,60],[17,88]],[[54,18],[61,39],[77,67],[96,90]]],
+ '木': [[[16,40],[91,39]],[[55,12],[54,97]],[[53,40],[39,60],[18,82]],[[56,42],[72,63],[91,83]]],
+ '本': [[[15,40],[92,40]],[[55,12],[54,96]],[[53,41],[36,67],[16,83]],[[56,42],[70,68],[93,84]],[[34,73],[75,73]]]
+};
+// 森の3つの「木」は、練習用の簡易モデル（公開データが読めない場合）
+function transformPart(part,x,y,w,h){return part.map(stroke=>stroke.map(([a,b])=>[x+a*w/100,y+b*h/100]))}
+DEMO['森']=[...transformPart(DEMO['木'],24,4,52,47),...transformPart(DEMO['木'],0,45,52,54),...transformPart(DEMO['木'],49,45,52,54)];
+const guideCache=new Map();
+function clamp(x){return Math.max(0,Math.min(1,x))}
+const d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+function polyLength(s){let sum=0;for(let k=1;k<s.length;k++)sum+=d2(s[k-1],s[k]);return sum}
+function sampled(points,n=27){if(!points||points.length<2)return points&&points.length?Array.from({length:n},()=>points[0]):[];
+ const lengths=[0];for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+d2(points[i-1],points[i]));
+ const total=lengths.at(-1);if(total<.001)return Array.from({length:n},()=>points[0]);
+ let seg=1;return Array.from({length:n},(_,k)=>{const at=total*k/(n-1);while(seg<lengths.length-1&&lengths[seg]<at)seg++;const f=(at-lengths[seg-1])/Math.max(.0001,lengths[seg]-lengths[seg-1]);return [points[seg-1][0]*(1-f)+points[seg][0]*f,points[seg-1][1]*(1-f)+points[seg][1]*f]});
+}
+function refBox(){return maskStats(bitmap(refCanvas.getContext('2d',{willReadFrequently:true}))).box}
+function alignToFont(pathsets){const pts=pathsets.flat(),minX=Math.min(...pts.map(p=>p[0])),maxX=Math.max(...pts.map(p=>p[0])),minY=Math.min(...pts.map(p=>p[1])),maxY=Math.max(...pts.map(p=>p[1]));
+ const [left,top,right,bottom]=refBox();const sx=(right-left)/Math.max(maxX-minX,1),sy=(bottom-top)/Math.max(maxY-minY,1);
+ return pathsets.map(s=>sampled(s.map(p=>[left+(p[0]-minX)*sx,top+(p[1]-minY)*sy])));
+}
+
+// UD教科書体に実際に描画されたインクの画素に始点/終点を吸着させる。
+// フォントには筆順情報がないので、筆画資料から得た開始/終了の目安位置を、
+// 同じキャンバス上の見本の線に補正する。フォントの外側に印を置かない。
+function snapPointToGlyph(point, pixels){
+ const x0=point[0], y0=point[1], radius=66;
+ const xmin=Math.max(0,Math.floor(x0-radius)),xmax=Math.min(SIZE-1,Math.ceil(x0+radius));
+ const ymin=Math.max(0,Math.floor(y0-radius)),ymax=Math.min(SIZE-1,Math.ceil(y0+radius));
+ let bestX=-1,bestY=-1,bestValue=Infinity;
+ // 7x7近傍のインク密度を使い、線のふちより線の中央側を少し優先。
+ for(let y=ymin;y<=ymax;y+=2)for(let x=xmin;x<=xmax;x+=2){
+  if(pixels[(y*SIZE+x)*4+3]<110)continue;
+  const dist2=(x-x0)**2+(y-y0)**2;
+  if(dist2>radius*radius)continue;
+  let dense=0;for(let yy=-3;yy<=3;yy+=3)for(let xx=-3;xx<=3;xx+=3){
+   const X=x+xx,Y=y+yy;if(X<0||Y<0||X>=SIZE||Y>=SIZE)continue;
+   if(pixels[(Y*SIZE+X)*4+3]>90)dense++;
+  }
+  const value=dist2-3*dense;
+  if(value<bestValue){bestValue=value;bestX=x;bestY=y}
+ }
+ // データと字形が離れすぎている場合も、見本上の最寄りの線に留める。
+ if(bestX<0){for(let y=0;y<SIZE;y+=3)for(let x=0;x<SIZE;x+=3){
+  if(pixels[(y*SIZE+x)*4+3]<110)continue;const value=(x-x0)**2+(y-y0)**2;
+  if(value<bestValue){bestValue=value;bestX=x;bestY=y}
+ }}
+ if(bestX<0)return point;
+ // 選ばれた点の周辺のインクの重心に寄せる（線の中心に近づける）。
+ let sx=0,sy=0,sw=0;
+ for(let y=Math.max(0,bestY-4);y<=Math.min(SIZE-1,bestY+4);y++)
+ for(let x=Math.max(0,bestX-4);x<=Math.min(SIZE-1,bestX+4);x++){
+  const a=pixels[(y*SIZE+x)*4+3];if(a>100){sx+=x*a;sy+=y*a;sw+=a}
+ }
+ const candidate=sw?[sx/sw,sy/sw]:[bestX,bestY];
+ // 必ず「文字の青いインクの上」に最後の位置を調整する。
+ const cx=Math.round(candidate[0]),cy=Math.round(candidate[1]);
+ return pixels[(cy*SIZE+cx)*4+3]>90?candidate:[bestX,bestY];
+}
+function markersOnPrintedGlyph(pathsets){
+ if(!refCanvas)return pathsets;
+ const pixels=refCanvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,SIZE,SIZE).data;
+ return pathsets.map(path=>{
+  const copy=path.map(p=>p.slice());if(!copy.length)return copy;
+  copy[0]=snapPointToGlyph(copy[0],pixels);
+  if(copy.length>1)copy[copy.length-1]=snapPointToGlyph(copy.at(-1),pixels);
+  return copy;
+ });
+}
+async function fetchGuides(ch){
+ if(!navigator.onLine)return null;
+ const hex=ch.codePointAt(0).toString(16).padStart(5,'0');
+ const urls=[`https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@r20260714/kanji/${hex}.svg`,`https://raw.githubusercontent.com/KanjiVG/kanjivg/r20260714/kanji/${hex}.svg`];
+ for(const url of urls){const ctr=new AbortController(),kill=setTimeout(()=>ctr.abort(),1500);
+ try{const r=await fetch(url,{mode:'cors',signal:ctr.signal,cache:'force-cache'});if(!r.ok)throw Error('HTTP '+r.status);
+ const raw=await r.text(),doc=new DOMParser().parseFromString(raw,'image/svg+xml');if(doc.querySelector('parsererror'))throw Error('invalid SVG');
+ const paths=[];
+ // KanjiVG SVGは筆画順にpathが記述されている。外部文字列をHTMLとして挿入せず、d属性だけを使用。
+ for(const node of doc.querySelectorAll('path[d]')){const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',node.getAttribute('d'));let len;
+ try{len=p.getTotalLength()}catch(_e){continue}if(!Number.isFinite(len)||len<.2)continue;
+ const points=[];for(let n=0;n<=35;n++){const q=p.getPointAtLength(len*n/35);points.push([q.x,q.y])}paths.push(points);
+ }if(!paths.length)throw Error('no strokes');return {paths,source:'KanjiVG'};
+ }catch(_e){}finally{clearTimeout(kill)}
+ }
+ return null;
+}
+async function getGuide(ch){if(guideCache.has(ch))return guideCache.get(ch);
+ // オンラインの筆画資料を優先。接続できない場合は簡易練習用の代表字モデル。
+ let d=DEMO[ch]?{paths:DEMO[ch],source:'簡易筆画モデル'}:await fetchGuides(ch);
+ guideCache.set(ch,d || null);return d;
+}
+function avg(p){return p.reduce((a,c)=>[a[0]+c[0],a[1]+c[1]],[0,0]).map(x=>x/p.length)}
+function lastDir(pts){const a=pts[Math.max(0,pts.length-5)],b=pts.at(-1),len=d2(a,b);return len>.0001?[(b[0]-a[0])/len,(b[1]-a[1])/len]:[0,0]}
+function strokeDir(pts){const a=pts[0],b=pts.at(-1),len=d2(a,b);return len>.001?[(b[0]-a[0])/len,(b[1]-a[1])/len]:[0,0]}
+function angle(a,b){const v=a[0]*b[0]+a[1]*b[1];return Math.acos(Math.max(-1,Math.min(1,v)))}
+function angleScore(user,guide){const u=strokeDir(user),g=strokeDir(guide);const deg=angle(u,g)*180/Math.PI;return clamp(1-Math.max(0,deg-9)/42)}
+function turnAtEnd(p){if(p.length<11)return 0;const n=p.length;
+ const v1=[p[n-7][0]-p[n-13][0],p[n-7][1]-p[n-13][1]];
+ const v2=[p[n-1][0]-p[n-7][0],p[n-1][1]-p[n-7][1]];
+ const l1=Math.hypot(...v1),l2=Math.hypot(...v2);return l1>2&&l2>2?angle([v1[0]/l1,v1[1]/l1],[v2[0]/l2,v2[1]/l2]):0;
+}
+function pairCost(a,b){const s=d2(a[0],b[0]),e=d2(a.at(-1),b.at(-1)),c=d2(avg(a),avg(b));const theta=angle(strokeDir(a),strokeDir(b));const len=Math.abs(Math.log(Math.max(.001,polyLength(a))/Math.max(.001,polyLength(b))));
+ return .29*clamp(s/120)+.29*clamp(e/120)+.19*clamp(c/140)+.14*clamp(theta/2.6)+.09*clamp(len/1.3);
+}
+// 最小費用二部割当。書き順を強制せず、まず線の形と場所で1対1対応させる。
+function assignStrokes(users,guides){const n=Math.max(users.length,guides.length),cost=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i<users.length&&j<guides.length?pairCost(users[i],guides[j]):.72));
+ const u=new Float64Array(n+1),v=new Float64Array(n+1),p=new Int32Array(n+1),way=new Int32Array(n+1);
+ for(let i=1;i<=n;i++){p[0]=i;let j0=0;const minv=new Float64Array(n+1).fill(Infinity),used=new Uint8Array(n+1);
+ do{used[j0]=1;const i0=p[j0];let delta=Infinity,j1=0;for(let j=1;j<=n;j++)if(!used[j]){let cur=cost[i0-1][j-1]-u[i0]-v[j];if(cur<minv[j]){minv[j]=cur;way[j]=j0}if(minv[j]<delta){delta=minv[j];j1=j}}for(let j=0;j<=n;j++){if(used[j]){u[p[j]]+=delta;v[j]-=delta}else minv[j]-=delta}j0=j1}while(p[j0]!==0);
+ do{const j1=way[j0];p[j0]=p[j1];j0=j1}while(j0!==0)}
+ const found=[];for(let j=1;j<=n;j++){const i=p[j]-1,k=j-1;if(i<users.length&&k<guides.length&&cost[i][k]<.64)found.push({i,j:k,u:users[i],g:guides[k],cost:cost[i][k]})}
+ found.sort((a,b)=>a.i-b.i);return found;
+}
+function startEndScore(matches,n){let total=0;for(const m of matches){const start=clamp(1-Math.max(0,d2(m.u[0],m.g[0])-6)/72),end=clamp(1-Math.max(0,d2(m.u.at(-1),m.g.at(-1))-6)/72);total+=(start+end)/2}
+ return 100*total/n;
+}
+function directionScore(matches,n){let sum=0,den=0;
+ for(const m of matches){const g=strokeDir(m.g);const horizontal=Math.abs(g[0])>=Math.abs(g[1])*1.4,vertical=Math.abs(g[1])>=Math.abs(g[0])*1.4;
+ const weight=horizontal||vertical?1.0:.35;sum+=weight*angleScore(m.u,m.g);den+=weight}
+ // 斜め線しかない漢字でも画の方向を採点する。
+ return den?100*(sum/den)*(matches.length/n):0;
+}
+function finishScore(matches,n){let sum=0;for(const m of matches){const a=turnAtEnd(m.u),b=turnAtEnd(m.g);const curve=clamp(1-Math.abs(a-b)/1.15);const tail=clamp(1-angle(lastDir(m.u),lastDir(m.g))/1.3);const structure=b>.45?(.55*curve+.45*tail):(.35*curve+.65*tail);sum+=structure}
+ return 100*sum/n;
+}
+function minGap(a,b){let best=Infinity;for(let i=0;i<a.length;i+=2)for(let j=0;j<b.length;j+=2)best=Math.min(best,d2(a[i],b[j]));return best}
+function lengthAndContactScore(matches,n){let lens=0;for(const m of matches){const ratio=Math.abs(Math.log(Math.max(1,polyLength(m.u))/Math.max(1,polyLength(m.g))));lens+=clamp(1-ratio/.9)}
+ let relation=0,pairs=0;for(let k=0;k<matches.length;k++)for(let l=k+1;l<matches.length;l++){
+  const a=matches[k],b=matches[l],rg=minGap(a.g,b.g),ru=minGap(a.u,b.u);
+  if(rg<28||ru<28){relation+=clamp(1-Math.abs(rg-ru)/38);pairs++}
+ }
+ const rel=pairs?relation/pairs:matches.length/n;
+ return 100*(.75*(lens/n)+.25*rel*(matches.length/n));
+}
+function countOrderScore(matches,n){const count=1-Math.abs(strokes.length-n)/Math.max(1,n),k=matches.length;let inv=0,total=0;
+ for(let a=0;a<k;a++)for(let b=a+1;b<k;b++){total++;if(matches[a].j>matches[b].j)inv++}
+ const order=total?1-inv/total:(k===1&&n===1?1:.6);
+ return 100*(.55*clamp(count)+.45*clamp(order)*(k/Math.max(strokes.length,n)));
+}
+function overlaps(idealBmp,ownBmp){const id=distanceMap(idealBmp.m),od=distanceMap(ownBmp.m);let near=0,cover=0;
+ for(let i=0;i<ownBmp.m.length;i++){if(ownBmp.m[i])near+=closeness(id[i]);if(idealBmp.m[i])cover+=closeness(od[i])}
+ near/=Math.max(1,ownBmp.count);cover/=Math.max(1,idealBmp.count);return (near+cover>0)?100*2*near*cover/(near+cover):0;
+}
+const CRITERIA=[['endpoints','はじまり・おわり',25],['placement','ぶひんの バランス',20],['finish','とめ・はね・はらい',20],['angle','たて・よこの かくど',15],['length','線の ながさ・つながり',10],['order','かくすう・かきじゅん',5],['overlap','青い線との かさなり',5]];
+function compare(guides){const user=strokes.map(s=>sampled(s));const match=assignStrokes(user,guides);
+ const idealBmp=bitmap(refCanvas.getContext('2d',{willReadFrequently:true})),ownBmp=bitmap(inkCtx);if(!ownBmp.count)return null;
+ const place=getStructureScore(ownBmp,idealBmp);
+ const n=Math.max(user.length,guides.length),cover=match.length/n;
+ const scores={
+  endpoints:startEndScore(match,n),placement:place.score*(.70+.30*cover),finish:finishScore(match,n),
+  angle:directionScore(match,n),length:lengthAndContactScore(match,n),order:countOrderScore(match,guides.length),
+  overlap:overlaps(idealBmp,ownBmp)
+ };
+ const weighted=CRITERIA.reduce((acc,[key,_name,weight])=>acc+scores[key]*weight/100,0);
+ return {score:Math.round(weighted),scores,place,matched:match.length,count:guides.length,matches:match};
+}
+// 外部の筆画資料がなくても動く安全な簡易評価。
+// 取得できない情報（筆順やとめ・はね）を採点したように見せない。
+function compareOutline(){
+ const idealBmp=bitmap(refCanvas.getContext('2d',{willReadFrequently:true}));
+ const ownBmp=bitmap(inkCtx);
+ if(!idealBmp.count||!ownBmp.count)return null;
+ const structure=getStructureScore(ownBmp,idealBmp);
+ const a=structure.own.box,b=structure.ideal.box;
+ const aw=a[2]-a[0]+1,ah=a[3]-a[1]+1,bw=b[2]-b[0]+1,bh=b[3]-b[1]+1;
+ const width=clamp(1-Math.abs(Math.log(Math.max(1,aw)/Math.max(1,bw)))/.9);
+ const height=clamp(1-Math.abs(Math.log(Math.max(1,ah)/Math.max(1,bh)))/.9);
+ const size=100*(width+height)/2;
+ const overlap=overlaps(idealBmp,ownBmp);
+ const scores={placement:structure.score,overlap,size};
+ const score=Math.round(.4*scores.placement+.4*scores.overlap+.2*scores.size);
+ return {score,scores,place:structure};
+}
+// くり返し同じ言葉にならないように、線の長さ、ズレの向き、画番号から具体的な助言を作る。
+function directionToMove(dx,dy){
+ if(Math.abs(dx)>=Math.abs(dy))return dx>0?'ひだり':'みぎ';
+ return dy>0?'うえ':'した';
+}
+function placementTip(place){
+ const a=place.own,b=place.ideal;
+ const dx=a.center[0]-b.center[0],dy=a.center[1]-b.center[1];
+ if(Math.hypot(dx,dy)>13)return '字ぜんたいが '+(Math.abs(dx)>Math.abs(dy)?(dx>0?'みぎ':'ひだり'):(dy>0?'した':'うえ'))+'に よっているよ。すこし '+directionToMove(dx,dy)+'へ よせよう。';
+ const aw=a.box[2]-a.box[0],ah=a.box[3]-a.box[1],bw=b.box[2]-b.box[0],bh=b.box[3]-b.box[1];
+ if(Math.abs(aw-bw)>Math.abs(ah-bh)&&Math.abs(aw-bw)>14)return '字の よこの はばを もう すこし '+(aw>bw?'せまく':'ひろく')+' してみよう。';
+ if(Math.abs(ah-bh)>14)return '字の たての 長さを もう すこし '+(ah>bh?'みじかく':'ながく')+' してみよう。';
+ const area=['ひだり上','みぎ上','ひだり下','みぎ下'];let idx=0,delta=0;
+ for(let i=0;i<4;i++){const d=Math.abs(a.quad[i]-b.quad[i]);if(d>delta){delta=d;idx=i}}
+ return area[idx]+'の 線の あつまりかたを おてほんに ちかづけよう。';
+}
+function endpointTip(res){
+ let worst=null,dist=-1;
+ for(const m of res.matches){
+  for(const [part,u,g] of [['はじめ',m.u[0],m.g[0]],['おわり',m.u.at(-1),m.g.at(-1)]]){
+   const d=d2(u,g);if(d>dist){dist=d;worst={part,stroke:m.j+1,u,g}}
+  }
+ }
+ if(!worst)return 'おてほんと かくすうを そろえて、１かくずつ かこう。';
+ if(dist<9)return worst.stroke+'かくめの かくはじまりから、ゆっくり 線を はこぼう。';
+ const dir=directionToMove(worst.u[0]-worst.g[0],worst.u[1]-worst.g[1]);
+ return worst.stroke+'かくめの かき'+worst.part+'を、すこし '+dir+'へ うごかしてみよう。';
+}
+function angleTip(res){
+ let bad=null,score=Infinity;
+ for(const m of res.matches){const v=angleScore(m.u,m.g);if(v<score){score=v;bad=m}}
+ if(!bad)return 'よこの線と たての線の むきを もう一度 見てみよう。';
+ const [x,y]=strokeDir(bad.g),[ux,uy]=strokeDir(bad.u),n=bad.j+1;
+ if(Math.abs(x)>Math.abs(y)*1.4){const dir=uy-y>0?'さがり':'あがり';return n+'かくめの よこの線は、すこし '+dir+'すぎているよ。'}
+ if(Math.abs(y)>Math.abs(x)*1.4){const dir=ux-x>0?'みぎ':'ひだり';return n+'かくめの たての線が '+dir+'に かたむいているよ。';}
+ return n+'かくめの ななめ線の かくどを おてほんに ちかづけよう。';
+}
+function lengthTip(res){
+ let bad=null,score=-1;
+ for(const m of res.matches){const d=Math.abs(polyLength(m.u)-polyLength(m.g));if(d>score){score=d;bad=m}}
+ if(!bad)return '線どうしが つながる ところを よく 見てみよう。';
+ return (bad.j+1)+'かくめの 線を、もう すこし '+(polyLength(bad.u)>polyLength(bad.g)?'みじかく':'ながく')+' してみよう。';
+}
+function finishTip(res){
+ let bad=null,low=Infinity;
+ for(const m of res.matches){const v=angle(lastDir(m.u),lastDir(m.g));if(v>.01&&1/v<low){low=1/v;bad=m}}
+ return bad?(bad.j+1)+'かくめの さいごの むきを なおしてみよう。':'線の さいごは とめる？ はねる？ はらう？ かくにんしよう。';
+}
+function orderTip(res){
+ if(strokes.length!==res.count)return 'おてほんは '+res.count+'かく、いまは '+strokes.length+'かく。１かくずつ ていねいに かこう。';
+ return 'かくじゅんを たしかめて、いちばん かきやすい じゅんに かこう。';
+}
+function overlapTip(res){
+ return '青い おてほんの '+(res.place.own.center[1]<res.place.ideal.center[1]?'下':'上')+'がわの ずれを ひとつ なおしてみよう。';
+}
+function adviceFor(key,res){
+ switch(key){case 'endpoints':return endpointTip(res);case 'placement':return placementTip(res.place);
+ case 'finish':return finishTip(res);case 'angle':return angleTip(res);case 'length':return lengthTip(res);
+ case 'order':return orderTip(res);default:return overlapTip(res)}
+}
+function setScore(score){
+ el('scoreValue').textContent=String(score);el('scoreBar').style.width=score+'%';el('scoreMeter').setAttribute('aria-valuenow',String(score));
+ el('scoreMessage').textContent=score>=90?'すごい！ ていねいに かけたね。':score>=75?'いい かんじ！ あと すこし！':score>=55?'よく がんばったね！ つぎは 1つ なおそう。':'まずは おてほんの かたちを よく 見よう。';
+}
+function presentOutline(r){
+ setScore(r.score);
+ el('guideNote').textContent='※ 形だけの かんたんチェックです。筆画の資料がないため、はじまり・おわりの点は出しません。';
+ const a=r.place.own,b=r.place.ideal;
+ const aw=a.box[2]-a.box[0],ah=a.box[3]-a.box[1],bw=b.box[2]-b.box[0],bh=b.box[3]-b.box[1];
+ const tips=[
+  {key:'placement',label:'ばしょ・バランス',weight:40,score:r.scores.placement,tip:placementTip(r.place)},
+  {key:'overlap',label:'線の かさなり',weight:40,score:r.scores.overlap,tip:'青い おてほんから はみ出した線を １本 さがしてみよう。'},
+  {key:'size',label:'字ぜんたいの 大きさ',weight:20,score:r.scores.size,tip:Math.abs(aw-bw)>Math.abs(ah-bh)?'よこの はばを すこし '+(aw>bw?'せまく':'ひろく')+' してみよう。':'字の たての 長さを すこし '+(ah>bh?'みじかく':'ながく')+' してみよう。'}
+ ];
+ tips.sort((x,y)=>y.weight*(100-y.score)-x.weight*(100-x.score));
+ el('adviceMain').textContent=r.score>=94?'字の かたちが よく そろっているね！':tips[0].tip;
+ el('adviceSub').textContent=r.score>=94?'つぎの 字も ていねいに かこう。':tips[1].tip;
+ const rows=el('detailRows');rows.replaceChildren();
+ for(const item of tips){const row=document.createElement('div'),name=document.createElement('span'),value=document.createElement('span');row.className='detail-row';name.textContent=item.label;value.textContent=(item.weight*item.score/100).toFixed(1)+' / '+item.weight+'点';row.append(name,value);rows.append(row)}
+ show('result',true);
+}
+function present(res,source){
+ setScore(res.score);
+ const ranked=CRITERIA.map(([key,_name,weight])=>({key,weight,rate:res.scores[key],lost:weight*(100-res.scores[key])/100})).sort((a,b)=>b.lost-a.lost);
+ // 始点・終点はすでに見本の印で確認できるので、定型アドバイスの対象から外す。
+ const recommended=ranked.filter(x=>x.key!=='endpoints'&&x.rate<88).slice(0,2);
+ if(!recommended.length){el('adviceMain').textContent='おてほんの かたちと よく そろったね！';el('adviceSub').textContent='長い線と 短い線を いしきして、つぎの 字にも ちょうせんしよう。';}
+ else{el('adviceMain').textContent=adviceFor(recommended[0].key,res);el('adviceSub').textContent=recommended[1]?adviceFor(recommended[1].key,res):'線の むきや ながさを いしきして かこう。';}
+ el('guideNote').textContent=source==='簡易筆画モデル'?'※ 点の位置と さいてんは、かんたんな 練習用モデルによる めやすです。':'※ 点の位置は、筆画データを 文字の線の上に あわせた めやすです。';
+ const rows=el('detailRows');rows.replaceChildren();for(const [key,label,weight] of CRITERIA){const row=document.createElement('div');row.className='detail-row';const name=document.createElement('span'),points=document.createElement('span');name.textContent=label;points.textContent=(weight*res.scores[key]/100).toFixed(1)+' / '+weight+'点';row.append(name,points);rows.append(row)}
+ show('result',true);
+}
+el('judgeBtn').addEventListener('click',async()=>{
+ if(active||!strokes.length){status('まず マスに １字 かいてね。');return}
+ const btn=el('judgeBtn');btn.disabled=true;btn.textContent='さいてん の じゅんび中…';
+ try{
+  if(!fontReady)await setupFont();if(!refCanvas)refCanvas=makeReference(selected);
+  if(!refCanvas){status('おてほんを つくれませんでした。文字を かくにんしてね。');return}
+  const payload=await getGuide(selected);
+  if(!payload){
+   const r=compareOutline();if(!r){status('マスに 字を かいてね。');return}
+   shownGuides=null;visible=true;drawOverlay();show('toggleBtn',true);
+   el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',false);
+   presentOutline(r);status('「'+selected+'」を くらべたよ。かたちの かんたんチェックが できたよ。');return;
+  }
+  const guides=markersOnPrintedGlyph(alignToFont(payload.paths)),r=compare(guides);
+  if(!r){status('マスに 字を かいてね。');return}
+  shownGuides=guides;visible=true;drawOverlay();show('toggleBtn',true);
+  el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',true);
+  present(r,payload.source);status('「'+selected+'」を くらべたよ。いちばん なおしたい ところを みてね。');
+ }catch(e){console.error(e);try{if(!refCanvas)refCanvas=makeReference(selected);const r=compareOutline();if(r){shownGuides=null;visible=true;drawOverlay();show('toggleBtn',true);presentOutline(r);status('かたちを くらべたよ。');}else status('マスの なかに かいてね。')}catch(_err){status('さいてんできませんでした。ページを ひらきなおしてね。')}}
+ finally{btn.disabled=false;btn.textContent='おてほんと かさねて ％を みる'}
+});
+renderChoices();setupFont().then(()=>status('漢字を えらんで マスに かいてね。'));
+})();
+</script>
+</body>
+</html>
