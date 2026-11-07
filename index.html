@@ -80,7 +80,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
   <details class="details"><summary>さいてんの ないようを みる（先生と いっしょに）</summary><div id="detailRows"></div><p class="result-note">※ 筆画データが使える字は7項目で判定します。使えない字は形・位置・重なりを参考にした簡易判定となり、始点・終点・書き順・とめ・はねの正誤は採点しません。</p></details>
  </div>
  <div class="font-state" id="fontState" role="status" aria-live="polite">書体を かくにん中です。</div>
- <div class="note">先生向け：通信できない場合も「字形の簡易判定」で必ず結果を表示します。<b>筆画資料のある字：</b>始点・終点25、部品の配置20、とめ・はね・はらい20、縦横の方向15、線の長さ・接し方10、画数・筆順5、線の重なり5＝100点（いずれも自動推定）。<b>資料のない字：</b>位置・バランス40、線の重なり40、字全体の大きさ20＝100点（簡易判定）。この場合は始点・終点、筆順、とめ・はね・はらいの良否は評価していません。使用する筆画資料：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener noreferrer">KanjiVG</a>（© Ulrich Apel, CC BY-SA 3.0）。文字は保存・送信しません。UDデジタル教科書体は端末にある場合のみ使用し、ない場合は代替書体を表示します。字体と筆画データの違いによる誤差は残ります。</div>
+ <div class="note">先生向け：通信できない場合も「字形の簡易判定」で必ず結果を表示します。<b>筆画資料のある字：</b>部品のバランス20、部品の大きさ20（見本の部品を表す四角と、自分が書いた部品の外枠との重なり面積で測定）、とめ・はね・はらい15、縦横の角度15、線の長さ・接し方10、画数・筆順10、見本の青い線との重なり10＝100点（いずれも自動推定）。始点・終点の評価は行いません。<b>資料のない字：</b>位置・バランス40、線の重なり40、字全体の大きさ20＝100点（簡易判定）。この場合は筆順、とめ・はね・はらいの良否は評価していません。使用する筆画資料：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener noreferrer">KanjiVG</a>（© Ulrich Apel, CC BY-SA 3.0）。文字は保存・送信しません。UDデジタル教科書体は端末にある場合のみ使用し、ない場合は代替書体を表示します。字体と筆画データの違いによる誤差は残ります。</div>
 </section>
 </main>
 <script>
@@ -326,9 +326,6 @@ function assignStrokes(users,guides){const n=Math.max(users.length,guides.length
  const found=[];for(let j=1;j<=n;j++){const i=p[j]-1,k=j-1;if(i<users.length&&k<guides.length&&cost[i][k]<.64)found.push({i,j:k,u:users[i],g:guides[k],cost:cost[i][k]})}
  found.sort((a,b)=>a.i-b.i);return found;
 }
-function startEndScore(matches,n){let total=0;for(const m of matches){const start=clamp(1-Math.max(0,d2(m.u[0],m.g[0])-6)/72),end=clamp(1-Math.max(0,d2(m.u.at(-1),m.g.at(-1))-6)/72);total+=(start+end)/2}
- return 100*total/n;
-}
 function directionScore(matches,n){let sum=0,den=0;
  for(const m of matches){const g=strokeDir(m.g);const horizontal=Math.abs(g[0])>=Math.abs(g[1])*1.4,vertical=Math.abs(g[1])>=Math.abs(g[0])*1.4;
  const weight=horizontal||vertical?1.0:.35;sum+=weight*angleScore(m.u,m.g);den+=weight}
@@ -356,18 +353,45 @@ function overlaps(idealBmp,ownBmp){const id=distanceMap(idealBmp.m),od=distanceM
  for(let i=0;i<ownBmp.m.length;i++){if(ownBmp.m[i])near+=closeness(id[i]);if(idealBmp.m[i])cover+=closeness(od[i])}
  near/=Math.max(1,ownBmp.count);cover/=Math.max(1,idealBmp.count);return (near+cover>0)?100*2*near*cover/(near+cover):0;
 }
-const CRITERIA=[['endpoints','はじまり・おわり',25],['placement','ぶひんの バランス',20],['finish','とめ・はね・はらい',20],['angle','たて・よこの かくど',15],['length','線の ながさ・つながり',10],['order','かくすう・かきじゅん',5],['overlap','青い線との かさなり',5]];
-function compare(guides){const user=strokes.map(s=>sampled(s));const match=assignStrokes(user,guides);
+function bboxOf(points){let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;for(const p of points){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1]}return [x0,y0,x1,y1]}
+function boxIoU(a,b){const ix=Math.max(0,Math.min(a[2],b[2])-Math.max(a[0],b[0])),iy=Math.max(0,Math.min(a[3],b[3])-Math.max(a[1],b[1])),inter=ix*iy;
+ const areaA=Math.max(0,a[2]-a[0])*Math.max(0,a[3]-a[1]),areaB=Math.max(0,b[2]-b[0])*Math.max(0,b[3]-b[1]),union=areaA+areaB-inter;
+ return union>0?inter/union:0;
+}
+// 部品の大きさ：見本の部品を表す四角（表示している緑の枠と同じ、余白つき）と、自分が書いたその部品の外枠との重なり面積で測る。
+// いちばん合っていない部品も返し、アドバイスに使う。
+function partSizeScore(matches,guides,parts){
+ if(!matches.length)return {score:0,worst:null};
+ if(parts&&parts.length===guides.length){
+  const refGroups=new Map(),userGroups=new Map();
+  guides.forEach((g,i)=>{const p=parts[i];if(!p)return;if(!refGroups.has(p))refGroups.set(p,[]);for(const pt of g)refGroups.get(p).push(pt)});
+  for(const m of matches){const p=parts[m.j];if(!p)continue;if(!userGroups.has(p))userGroups.set(p,[]);for(const pt of m.u)userGroups.get(p).push(pt)}
+  const pad=10,ious=[];let worst=null,nth=0;
+  for(const [p,refPts] of refGroups){const userPts=userGroups.get(p);if(!userPts||!userPts.length)continue;nth++;
+   const rb=bboxOf(refPts),refBox=[Math.max(0,rb[0]-pad),Math.max(0,rb[1]-pad),Math.min(SIZE,rb[2]+pad),Math.min(SIZE,rb[3]+pad)],raw=bboxOf(userPts),ub=[Math.max(0,raw[0]-pad),Math.max(0,raw[1]-pad),Math.min(SIZE,raw[2]+pad),Math.min(SIZE,raw[3]+pad)];
+   const iou=boxIoU(ub,refBox);ious.push(iou);
+   const userArea=Math.max(1,(ub[2]-ub[0])*(ub[3]-ub[1])),refArea=Math.max(1,(refBox[2]-refBox[0])*(refBox[3]-refBox[1]));
+   if(!worst||iou<worst.iou)worst={nth,iou,bigger:userArea>refArea};
+  }
+  if(ious.length)return {score:100*ious.reduce((a,b)=>a+b,0)/ious.length,worst};
+ }
+ // 部品に分かれない字は、字全体の外枠同士の重なりで測る。
+ const userPts=[];for(const m of matches)for(const pt of m.u)userPts.push(pt);
+ return {score:100*boxIoU(bboxOf(userPts),bboxOf(guides.flat())),worst:null};
+}
+const CRITERIA=[['placement','ぶひんの バランス',20],['partsize','ぶひんの 大きさ',20],['finish','とめ・はね・はらい',15],['angle','たて・よこの かくど',15],['length','線の ながさ・つながり',10],['order','かくすう・かきじゅん',10],['overlap','青い線との かさなり',10]];
+function compare(guides,parts){const user=strokes.map(s=>sampled(s));const match=assignStrokes(user,guides);
  const idealBmp=bitmap(refCanvas.getContext('2d',{willReadFrequently:true})),ownBmp=bitmap(inkCtx);if(!ownBmp.count)return null;
  const place=getStructureScore(ownBmp,idealBmp);
  const n=Math.max(user.length,guides.length),cover=match.length/n;
+ const ps=partSizeScore(match,guides,parts);
  const scores={
-  endpoints:startEndScore(match,n),placement:place.score*(.70+.30*cover),finish:finishScore(match,n),
+  placement:place.score*(.70+.30*cover),partsize:ps.score,finish:finishScore(match,n),
   angle:directionScore(match,n),length:lengthAndContactScore(match,n),order:countOrderScore(match,guides.length),
   overlap:overlaps(idealBmp,ownBmp)
  };
  const weighted=CRITERIA.reduce((acc,[key,_name,weight])=>acc+scores[key]*weight/100,0);
- return {score:Math.round(weighted),scores,place,matched:match.length,count:guides.length,matches:match};
+ return {score:Math.round(weighted),scores,place,matched:match.length,count:guides.length,matches:match,partWorst:ps.worst};
 }
 // 外部の筆画資料がなくても動く安全な簡易評価。
 // 取得できない情報（筆順やとめ・はね）を採点したように見せない。
@@ -402,17 +426,10 @@ function placementTip(place){
  for(let i=0;i<4;i++){const d=Math.abs(a.quad[i]-b.quad[i]);if(d>delta){delta=d;idx=i}}
  return area[idx]+'の 線の あつまりかたを おてほんに ちかづけよう。';
 }
-function endpointTip(res){
- let worst=null,dist=-1;
- for(const m of res.matches){
-  for(const [part,u,g] of [['はじめ',m.u[0],m.g[0]],['おわり',m.u.at(-1),m.g.at(-1)]]){
-   const d=d2(u,g);if(d>dist){dist=d;worst={part,stroke:m.j+1,u,g}}
-  }
- }
- if(!worst)return 'おてほんと かくすうを そろえて、１かくずつ かこう。';
- if(dist<9)return worst.stroke+'かくめの かくはじまりから、ゆっくり 線を はこぼう。';
- const dir=directionToMove(worst.u[0]-worst.g[0],worst.u[1]-worst.g[1]);
- return worst.stroke+'かくめの かき'+worst.part+'を、すこし '+dir+'へ うごかしてみよう。';
+function partSizeTip(res){
+ const w=res.partWorst;
+ if(!w)return '字ぜんたいの 大きさを おてほんに 合わせてみよう。';
+ return w.nth+'つめの ぶひんを、緑の 四角に 合うように もう すこし '+(w.bigger?'小さく':'大きく')+' かいてみよう。';
 }
 function angleTip(res){
  let bad=null,score=Infinity;
@@ -442,7 +459,7 @@ function overlapTip(res){
  return '青い おてほんの '+(res.place.own.center[1]<res.place.ideal.center[1]?'下':'上')+'がわの ずれを ひとつ なおしてみよう。';
 }
 function adviceFor(key,res){
- switch(key){case 'endpoints':return endpointTip(res);case 'placement':return placementTip(res.place);
+ switch(key){case 'placement':return placementTip(res.place);case 'partsize':return partSizeTip(res);
  case 'finish':return finishTip(res);case 'angle':return angleTip(res);case 'length':return lengthTip(res);
  case 'order':return orderTip(res);default:return overlapTip(res)}
 }
@@ -470,8 +487,8 @@ function presentOutline(r){
 function present(res,source){
  setScore(res.score);
  const ranked=CRITERIA.map(([key,_name,weight])=>({key,weight,rate:res.scores[key],lost:weight*(100-res.scores[key])/100})).sort((a,b)=>b.lost-a.lost);
- // 始点・終点は定型アドバイスの対象から外し、他の直しどころを優先する。
- const recommended=ranked.filter(x=>x.key!=='endpoints'&&x.rate<88).slice(0,2);
+ // 点数の低い項目から、直しどころを2つまで出す。
+ const recommended=ranked.filter(x=>x.rate<88).slice(0,2);
  if(!recommended.length){el('adviceMain').textContent='おてほんの かたちと よく そろったね！';el('adviceSub').textContent='長い線と 短い線を いしきして、つぎの 字にも ちょうせんしよう。';}
  else{el('adviceMain').textContent=adviceFor(recommended[0].key,res);el('adviceSub').textContent=recommended[1]?adviceFor(recommended[1].key,res):'線の むきや ながさを いしきして かこう。';}
  el('guideNote').textContent=(source==='簡易筆画モデル'?'※ さいてんは、かんたんな 練習用モデルによる めやすです。':'※ 筆画データを もとに さいてんしています。')+(shownPartBoxes?' 緑の わくは、部首などの 部品の まとまりだよ。':'');
@@ -491,7 +508,7 @@ el('judgeBtn').addEventListener('click',async()=>{
    el('toggleBtn').textContent='おてほんを かくす';
    presentOutline(r);status('「'+selected+'」を くらべたよ。かたちの かんたんチェックが できたよ。');return;
   }
-  const guides=markersOnPrintedGlyph(alignToFont(payload.paths)),r=compare(guides);
+  const guides=markersOnPrintedGlyph(alignToFont(payload.paths)),r=compare(guides,payload.parts);
   if(!r){status('マスに 字を かいてね。');return}
   shownGuides=guides;shownPartBoxes=payload.parts?computePartBoxes(guides,payload.parts):null;visible=true;drawOverlay();show('toggleBtn',true);
   el('toggleBtn').textContent='おてほんを かくす';
