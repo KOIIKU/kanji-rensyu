@@ -68,7 +68,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
  <div class="instruction">② マスの なかに ゆびで かこう</div>
  <div class="board-wrap"><div class="board"><canvas id="grid" width="512" height="512" aria-hidden="true"></canvas><canvas id="ink" width="512" height="512" aria-label="漢字を指で書く正方形のマス"></canvas><canvas id="overlay" width="512" height="512" aria-hidden="true"></canvas></div></div>
  <div class="instruction">③ ボタンを おして くらべよう</div>
- <div class="actions"><button type="button" id="judgeBtn" class="btn btn-primary btn-judge">おてほんと かさねて ％を みる</button><button type="button" id="undoBtn" class="btn">１かく もどす</button><button type="button" id="clearBtn" class="btn">ぜんぶ けす</button><button type="button" id="toggleBtn" class="btn hidden">おてほんを かくす</button></div>
+ <div class="actions"><button type="button" id="judgeBtn" class="btn btn-primary btn-judge">おてほんと かさねて ％を みる</button><button type="button" id="undoBtn" class="btn">１かく もどす</button><button type="button" id="clearBtn" class="btn">ぜんぶ けす</button><button type="button" id="toggleBtn" class="btn hidden">おてほんを かくす</button><button type="button" id="pointsBtn" class="btn hidden" aria-pressed="false">最初と最後の点を出す</button></div>
  <div class="legend"><span><i class="dot black"></i>じぶんの字</span><span><i class="dot blue"></i>おてほん（半とうめい50％）</span></div>
  <p class="marker-legend hidden" id="markerLegend"><span class="start">● 緑＝各画のかきはじめ</span>　<span class="end">● オレンジ＝各画のかきおわり</span></p>
  <p id="status" class="status" role="status" aria-live="polite">漢字を えらんで マスに かいてね。</p>
@@ -87,7 +87,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
 <script>
 (()=>{'use strict';
 const SIZE=512, el=id=>document.getElementById(id), ink=el('ink'), inkCtx=ink.getContext('2d',{willReadFrequently:true}), overlayCtx=el('overlay').getContext('2d'), grid=el('grid').getContext('2d');
-let lesson=['十','木','森','橋','漢'], selected='十', strokes=[], active=null, pointerId=null, refCanvas=null, visible=false, shownGuides=null, fontChoice='"Yu Mincho",serif', fontReady=false;
+let lesson=['十','木','森','橋','漢'], selected='十', strokes=[], active=null, pointerId=null, refCanvas=null, visible=false, shownGuides=null, showPoints=false, fontChoice='"Yu Mincho",serif', fontReady=false;
 const GRID_COLOR='#d6e1ef', INK_COLOR='#1b2738', REF_COLOR='#1375d1';
 function status(s){el('status').textContent=s}
 function show(id,yes){el(id).classList.toggle('hidden',!yes)}
@@ -97,7 +97,7 @@ drawGrid();
 function pointFromEvent(e){const r=ink.getBoundingClientRect();return [Math.max(0,Math.min(SIZE,(e.clientX-r.left)*SIZE/r.width)),Math.max(0,Math.min(SIZE,(e.clientY-r.top)*SIZE/r.height))]}
 function drawDot(p){inkCtx.fillStyle=INK_COLOR;inkCtx.beginPath();inkCtx.arc(p[0],p[1],6,0,2*Math.PI);inkCtx.fill()}
 function drawLine(a,b){inkCtx.strokeStyle=INK_COLOR;inkCtx.lineWidth=12;inkCtx.lineCap='round';inkCtx.lineJoin='round';inkCtx.beginPath();inkCtx.moveTo(a[0],a[1]);inkCtx.lineTo(b[0],b[1]);inkCtx.stroke()}
-function hideResult(){show('result',false);show('toggleBtn',false);show('markerLegend',false);shownGuides=null;visible=false;overlayCtx.clearRect(0,0,SIZE,SIZE)}
+function hideResult(){show('result',false);show('toggleBtn',false);show('pointsBtn',false);show('markerLegend',false);shownGuides=null;visible=false;showPoints=false;el('pointsBtn').setAttribute('aria-pressed','false');overlayCtx.clearRect(0,0,SIZE,SIZE)}
 function redrawInk(){inkCtx.clearRect(0,0,SIZE,SIZE);for(const s of strokes){drawDot(s[0]);for(let i=1;i<s.length;i++)drawLine(s[i-1],s[i])}}
 function clearInk(message='マスの なかに ゆびで かいてね。'){strokes=[];active=null;pointerId=null;inkCtx.clearRect(0,0,SIZE,SIZE);hideResult();status(message)}
 ink.addEventListener('pointerdown',e=>{if(active||!e.isPrimary)return;e.preventDefault();hideResult();pointerId=e.pointerId;try{ink.setPointerCapture(pointerId)}catch(_e){}active=[pointFromEvent(e)];drawDot(active[0])});
@@ -129,11 +129,12 @@ function makeReference(ch){const orig=document.createElement('canvas');orig.widt
 function drawOverlay(){
  overlayCtx.clearRect(0,0,SIZE,SIZE);if(!visible||!refCanvas)return;
  overlayCtx.save();overlayCtx.globalAlpha=.5;overlayCtx.drawImage(refCanvas,0,0);overlayCtx.restore();
- if(shownGuides){
+ if(shownGuides&&showPoints){
   for(const guide of shownGuides){const start=guide[0],end=guide.at(-1);for(const [point,color] of [[start,'#1d9e70'],[end,'#f08a24']]){overlayCtx.beginPath();overlayCtx.fillStyle=color;overlayCtx.strokeStyle='white';overlayCtx.lineWidth=2.5;overlayCtx.arc(point[0],point[1],6.2,0,2*Math.PI);overlayCtx.fill();overlayCtx.stroke()}}
  }
 }
-el('toggleBtn').addEventListener('click',()=>{visible=!visible;drawOverlay();show('markerLegend',visible&&!!shownGuides);el('toggleBtn').textContent=visible?'おてほんを かくす':'おてほんを みせる'});
+el('toggleBtn').addEventListener('click',()=>{visible=!visible;drawOverlay();show('pointsBtn',visible&&!!shownGuides);show('markerLegend',visible&&!!shownGuides&&showPoints);el('toggleBtn').textContent=visible?'おてほんを かくす':'おてほんを みせる'});
+el('pointsBtn').addEventListener('click',()=>{if(!shownGuides)return;showPoints=!showPoints;el('pointsBtn').setAttribute('aria-pressed',String(showPoints));drawOverlay();show('markerLegend',visible&&showPoints);status(showPoints?'はじめ（緑）と おわり（オレンジ）の 点を 出したよ。':'点を かくしたよ。出したい ときは ボタンを おしてね。')});
 function bitmap(context){const a=context.getImageData(0,0,SIZE,SIZE).data,m=new Uint8Array(SIZE*SIZE);let count=0;for(let i=0;i<m.length;i++){if(a[i*4+3]>72){m[i]=1;count++}}return {m,count}}
 // 近傍8方向の最短距離を2回の走査で近似（画素ごとの線への距離）。
 function distanceMap(mask){const W=SIZE,N=W*W, d=new Float32Array(N),DIAG=Math.SQRT2;for(let i=0;i<N;i++)d[i]=mask[i]?0:9999;
@@ -444,7 +445,7 @@ function present(res,source){
  const recommended=ranked.filter(x=>x.key!=='endpoints'&&x.rate<88).slice(0,2);
  if(!recommended.length){el('adviceMain').textContent='おてほんの かたちと よく そろったね！';el('adviceSub').textContent='長い線と 短い線を いしきして、つぎの 字にも ちょうせんしよう。';}
  else{el('adviceMain').textContent=adviceFor(recommended[0].key,res);el('adviceSub').textContent=recommended[1]?adviceFor(recommended[1].key,res):'線の むきや ながさを いしきして かこう。';}
- el('guideNote').textContent=source==='簡易筆画モデル'?'※ 点の位置と さいてんは、かんたんな 練習用モデルによる めやすです。':'※ 点の位置は、筆画データを 文字の線の上に あわせた めやすです。';
+ el('guideNote').textContent=source==='簡易筆画モデル'?'※ はじめ・おわりの点は「最初と最後の点を出す」ボタンを おすと 出るよ。点の位置と さいてんは、かんたんな 練習用モデルによる めやすです。':'※ はじめ・おわりの点は「最初と最後の点を出す」ボタンを おすと 出るよ。点の位置は、筆画データを 文字の線の上に あわせた めやすです。';
  const rows=el('detailRows');rows.replaceChildren();for(const [key,label,weight] of CRITERIA){const row=document.createElement('div');row.className='detail-row';const name=document.createElement('span'),points=document.createElement('span');name.textContent=label;points.textContent=(weight*res.scores[key]/100).toFixed(1)+' / '+weight+'点';row.append(name,points);rows.append(row)}
  show('result',true);
 }
@@ -457,16 +458,16 @@ el('judgeBtn').addEventListener('click',async()=>{
   const payload=await getGuide(selected);
   if(!payload){
    const r=compareOutline();if(!r){status('マスに 字を かいてね。');return}
-   shownGuides=null;visible=true;drawOverlay();show('toggleBtn',true);
+   shownGuides=null;visible=true;showPoints=false;drawOverlay();show('toggleBtn',true);show('pointsBtn',false);
    el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',false);
    presentOutline(r);status('「'+selected+'」を くらべたよ。かたちの かんたんチェックが できたよ。');return;
   }
   const guides=markersOnPrintedGlyph(alignToFont(payload.paths)),r=compare(guides);
   if(!r){status('マスに 字を かいてね。');return}
-  shownGuides=guides;visible=true;drawOverlay();show('toggleBtn',true);
-  el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',true);
+  shownGuides=guides;visible=true;showPoints=false;el('pointsBtn').setAttribute('aria-pressed','false');drawOverlay();show('toggleBtn',true);show('pointsBtn',true);
+  el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',false);
   present(r,payload.source);status('「'+selected+'」を くらべたよ。いちばん なおしたい ところを みてね。');
- }catch(e){console.error(e);try{if(!refCanvas)refCanvas=makeReference(selected);const r=compareOutline();if(r){shownGuides=null;visible=true;drawOverlay();show('toggleBtn',true);presentOutline(r);status('かたちを くらべたよ。');}else status('マスの なかに かいてね。')}catch(_err){status('さいてんできませんでした。ページを ひらきなおしてね。')}}
+ }catch(e){console.error(e);try{if(!refCanvas)refCanvas=makeReference(selected);const r=compareOutline();if(r){shownGuides=null;visible=true;showPoints=false;drawOverlay();show('toggleBtn',true);show('pointsBtn',false);presentOutline(r);status('かたちを くらべたよ。');}else status('マスの なかに かいてね。')}catch(_err){status('さいてんできませんでした。ページを ひらきなおしてね。')}}
  finally{btn.disabled=false;btn.textContent='おてほんと かさねて ％を みる'}
 });
 renderChoices();setupFont().then(()=>status('漢字を えらんで マスに かいてね。'));
