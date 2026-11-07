@@ -47,7 +47,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
 .meter{height:14px;background:#d0e1f2;border-radius:100px;overflow:hidden}.meter>div{height:100%;width:0;background:#2775c9;border-radius:100px;transition:width .4s ease}
 .advice{background:#fff;border-radius:13px;padding:14px 12px;margin:11px 0 0;text-align:left}.advice-title{font-weight:850;color:#1d5482;margin:0 0 5px;font-size:16px}.advice p:not(.advice-title){margin:5px 0;font-weight:650;font-size:16px;line-height:1.65}.advice #adviceSub{color:#536b82;font-size:14px;font-weight:550}
 .result-note{font-size:12px;color:#516c84;margin:7px 0 0}
-.details{margin:12px 0 0;background:#fff;padding:10px 12px;border-radius:10px;text-align:left;font-size:14px}.details summary{cursor:pointer;color:#245d94;font-weight:750}.detail-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #e1eaf3}.detail-row span:nth-child(2){white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:750}.marker-legend{font-size:13px;color:#4a627f;text-align:center;margin-top:6px}.marker-legend .start{color:#18885a;font-weight:850}.marker-legend .end{color:#ba5c0b;font-weight:850}
+.details{margin:12px 0 0;background:#fff;padding:10px 12px;border-radius:10px;text-align:left;font-size:14px}.details summary{cursor:pointer;color:#245d94;font-weight:750}.detail-row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #e1eaf3}.detail-row span:nth-child(2){white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:750}
 .font-state{margin-top:15px;background:#edf5fe;border-radius:11px;padding:11px 12px;font-size:13px;color:#385c80}.font-state.warning{background:var(--orange);color:#765313}
 .note{font-size:13px;color:#56708a;border-top:1px solid #dfebf7;margin-top:17px;padding-top:12px}
 .hidden{display:none!important}
@@ -68,9 +68,8 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
  <div class="instruction">② マスの なかに ゆびで かこう</div>
  <div class="board-wrap"><div class="board"><canvas id="grid" width="512" height="512" aria-hidden="true"></canvas><canvas id="ink" width="512" height="512" aria-label="漢字を指で書く正方形のマス"></canvas><canvas id="overlay" width="512" height="512" aria-hidden="true"></canvas></div></div>
  <div class="instruction">③ ボタンを おして くらべよう</div>
- <div class="actions"><button type="button" id="judgeBtn" class="btn btn-primary btn-judge">おてほんと かさねて ％を みる</button><button type="button" id="undoBtn" class="btn">１かく もどす</button><button type="button" id="clearBtn" class="btn">ぜんぶ けす</button><button type="button" id="toggleBtn" class="btn hidden">おてほんを かくす</button><button type="button" id="pointsBtn" class="btn hidden" aria-pressed="false">最初と最後の点を出す</button></div>
+ <div class="actions"><button type="button" id="judgeBtn" class="btn btn-primary btn-judge">おてほんと かさねて ％を みる</button><button type="button" id="undoBtn" class="btn">１かく もどす</button><button type="button" id="clearBtn" class="btn">ぜんぶ けす</button><button type="button" id="toggleBtn" class="btn hidden">おてほんを かくす</button></div>
  <div class="legend"><span><i class="dot black"></i>じぶんの字</span><span><i class="dot blue"></i>おてほん（半とうめい50％）</span></div>
- <p class="marker-legend hidden" id="markerLegend"><span class="start">● 緑＝各画のかきはじめ</span>　<span class="end">● オレンジ＝各画のかきおわり</span></p>
  <p id="status" class="status" role="status" aria-live="polite">漢字を えらんで マスに かいてね。</p>
  <div id="result" class="result hidden" role="status" aria-live="polite">
   <p class="score-heading">おてほんとの ぴったり度（めやす）</p>
@@ -81,13 +80,13 @@ button:focus-visible,input:focus-visible{outline:3px solid #efaa2d;outline-offse
   <details class="details"><summary>さいてんの ないようを みる（先生と いっしょに）</summary><div id="detailRows"></div><p class="result-note">※ 筆画データが使える字は7項目で判定します。使えない字は形・位置・重なりを参考にした簡易判定となり、始点・終点・書き順・とめ・はねの正誤は採点しません。</p></details>
  </div>
  <div class="font-state" id="fontState" role="status" aria-live="polite">書体を かくにん中です。</div>
- <div class="note">先生向け：通信できない場合も「字形の簡易判定」で必ず結果を表示します。<b>筆画資料のある字：</b>始点・終点25、部品の配置20、とめ・はね・はらい20、縦横の方向15、線の長さ・接し方10、画数・筆順5、線の重なり5＝100点（いずれも自動推定）。<b>資料のない字：</b>位置・バランス40、線の重なり40、字全体の大きさ20＝100点（簡易判定）。この場合は始点・終点、筆順、とめ・はね・はらいの良否は評価していません。使用する筆画資料：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener noreferrer">KanjiVG</a>（© Ulrich Apel, CC BY-SA 3.0）。文字は保存・送信しません。UDデジタル教科書体は端末にある場合のみ使用し、ない場合は代替書体を表示します。始点・終点の印は筆画資料の座標を見本の描画線に吸着させた参考位置です。字体と筆画データの違いによる誤差は残ります。</div>
+ <div class="note">先生向け：通信できない場合も「字形の簡易判定」で必ず結果を表示します。<b>筆画資料のある字：</b>始点・終点25、部品の配置20、とめ・はね・はらい20、縦横の方向15、線の長さ・接し方10、画数・筆順5、線の重なり5＝100点（いずれも自動推定）。<b>資料のない字：</b>位置・バランス40、線の重なり40、字全体の大きさ20＝100点（簡易判定）。この場合は始点・終点、筆順、とめ・はね・はらいの良否は評価していません。使用する筆画資料：<a href="https://kanjivg.tagaini.net/" target="_blank" rel="noopener noreferrer">KanjiVG</a>（© Ulrich Apel, CC BY-SA 3.0）。文字は保存・送信しません。UDデジタル教科書体は端末にある場合のみ使用し、ない場合は代替書体を表示します。字体と筆画データの違いによる誤差は残ります。</div>
 </section>
 </main>
 <script>
 (()=>{'use strict';
 const SIZE=512, el=id=>document.getElementById(id), ink=el('ink'), inkCtx=ink.getContext('2d',{willReadFrequently:true}), overlayCtx=el('overlay').getContext('2d'), grid=el('grid').getContext('2d');
-let lesson=['十','木','森','橋','漢'], selected='十', strokes=[], active=null, pointerId=null, refCanvas=null, visible=false, shownGuides=null, showPoints=false, shownPartBoxes=null, fontChoice='"Yu Mincho",serif', fontReady=false;
+let lesson=['十','木','森','橋','漢'], selected='十', strokes=[], active=null, pointerId=null, refCanvas=null, visible=false, shownGuides=null, shownPartBoxes=null, fontChoice='"Yu Mincho",serif', fontReady=false;
 const GRID_COLOR='#d6e1ef', INK_COLOR='#1b2738', REF_COLOR='#1375d1';
 function status(s){el('status').textContent=s}
 function show(id,yes){el(id).classList.toggle('hidden',!yes)}
@@ -97,7 +96,7 @@ drawGrid();
 function pointFromEvent(e){const r=ink.getBoundingClientRect();return [Math.max(0,Math.min(SIZE,(e.clientX-r.left)*SIZE/r.width)),Math.max(0,Math.min(SIZE,(e.clientY-r.top)*SIZE/r.height))]}
 function drawDot(p){inkCtx.fillStyle=INK_COLOR;inkCtx.beginPath();inkCtx.arc(p[0],p[1],6,0,2*Math.PI);inkCtx.fill()}
 function drawLine(a,b){inkCtx.strokeStyle=INK_COLOR;inkCtx.lineWidth=12;inkCtx.lineCap='round';inkCtx.lineJoin='round';inkCtx.beginPath();inkCtx.moveTo(a[0],a[1]);inkCtx.lineTo(b[0],b[1]);inkCtx.stroke()}
-function hideResult(){show('result',false);show('toggleBtn',false);show('pointsBtn',false);show('markerLegend',false);shownGuides=null;visible=false;showPoints=false;shownPartBoxes=null;el('pointsBtn').setAttribute('aria-pressed','false');overlayCtx.clearRect(0,0,SIZE,SIZE)}
+function hideResult(){show('result',false);show('toggleBtn',false);shownGuides=null;visible=false;shownPartBoxes=null;overlayCtx.clearRect(0,0,SIZE,SIZE)}
 function redrawInk(){inkCtx.clearRect(0,0,SIZE,SIZE);for(const s of strokes){drawDot(s[0]);for(let i=1;i<s.length;i++)drawLine(s[i-1],s[i])}}
 function clearInk(message='マスの なかに ゆびで かいてね。'){strokes=[];active=null;pointerId=null;inkCtx.clearRect(0,0,SIZE,SIZE);hideResult();status(message)}
 ink.addEventListener('pointerdown',e=>{if(active||!e.isPrimary)return;e.preventDefault();hideResult();pointerId=e.pointerId;try{ink.setPointerCapture(pointerId)}catch(_e){}active=[pointFromEvent(e)];drawDot(active[0])});
@@ -134,12 +133,8 @@ function drawOverlay(){
   for(const b of shownPartBoxes)overlayCtx.rect(b[0],b[1],b[2]-b[0],b[3]-b[1]);
   overlayCtx.stroke();
  }
- if(shownGuides&&showPoints){
-  for(const guide of shownGuides){const start=guide[0],end=guide.at(-1);for(const [point,color] of [[start,'#1d9e70'],[end,'#f08a24']]){overlayCtx.beginPath();overlayCtx.fillStyle=color;overlayCtx.strokeStyle='white';overlayCtx.lineWidth=2.5;overlayCtx.arc(point[0],point[1],6.2,0,2*Math.PI);overlayCtx.fill();overlayCtx.stroke()}}
- }
 }
-el('toggleBtn').addEventListener('click',()=>{visible=!visible;drawOverlay();show('pointsBtn',visible&&!!shownGuides);show('markerLegend',visible&&!!shownGuides&&showPoints);el('toggleBtn').textContent=visible?'おてほんを かくす':'おてほんを みせる'});
-el('pointsBtn').addEventListener('click',()=>{if(!shownGuides)return;showPoints=!showPoints;el('pointsBtn').setAttribute('aria-pressed',String(showPoints));drawOverlay();show('markerLegend',visible&&showPoints);status(showPoints?'はじめ（緑）と おわり（オレンジ）の 点を 出したよ。':'点を かくしたよ。出したい ときは ボタンを おしてね。')});
+el('toggleBtn').addEventListener('click',()=>{visible=!visible;drawOverlay();el('toggleBtn').textContent=visible?'おてほんを かくす':'おてほんを みせる'});
 function bitmap(context){const a=context.getImageData(0,0,SIZE,SIZE).data,m=new Uint8Array(SIZE*SIZE);let count=0;for(let i=0;i<m.length;i++){if(a[i*4+3]>72){m[i]=1;count++}}return {m,count}}
 // 近傍8方向の最短距離を2回の走査で近似（画素ごとの線への距離）。
 function distanceMap(mask){const W=SIZE,N=W*W, d=new Float32Array(N),DIAG=Math.SQRT2;for(let i=0;i<N;i++)d[i]=mask[i]?0:9999;
@@ -196,6 +191,8 @@ const DEMO={
 // 森の3つの「木」は、練習用の簡易モデル（公開データが読めない場合）
 function transformPart(part,x,y,w,h){return part.map(stroke=>stroke.map(([a,b])=>[x+a*w/100,y+b*h/100]))}
 DEMO['森']=[...transformPart(DEMO['木'],24,4,52,47),...transformPart(DEMO['木'],0,45,52,54),...transformPart(DEMO['木'],49,45,52,54)];
+// 簡易モデルでも部品のまとまりが分かっている字は、画ごとの部品番号を持たせる（森＝木3つ）。
+const DEMO_PARTS={'森':[1,1,1,1,2,2,2,2,3,3,3,3]};
 const guideCache=new Map();
 function clamp(x){return Math.max(0,Math.min(1,x))}
 const d2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
@@ -283,7 +280,10 @@ async function fetchGuides(ch){
  const paths=[],parts=[];
  // KanjiVG SVGは筆画順にpathが記述されている。外部文字列をHTMLとして挿入せず、d属性だけを使用。
  // あわせて、漢字全体の直下にある部品グループ（部首などのまとまり）ごとに画を振り分け、部品番号も残す。
- const strokeRoot=doc.querySelector('g[id^="kvg:StrokePaths"]'),rootGroup=strokeRoot?strokeRoot.querySelector(':scope > g'):null,partIds=new Map();
+ let strokeRoot=null,rootGroup=null;
+ for(const g of doc.querySelectorAll('g')){if((g.getAttribute('id')||'').indexOf('kvg:StrokePaths')===0){strokeRoot=g;break}}
+ if(strokeRoot)for(const child of strokeRoot.children){if(child.tagName==='g'){rootGroup=child;break}}
+ const partIds=new Map();
  for(const node of doc.querySelectorAll('path[d]')){const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',node.getAttribute('d'));let len;
  try{len=p.getTotalLength()}catch(_e){continue}if(!Number.isFinite(len)||len<.2)continue;
  const points=[];for(let n=0;n<=35;n++){const q=p.getPointAtLength(len*n/35);points.push([q.x,q.y])}paths.push(points);
@@ -299,8 +299,9 @@ async function fetchGuides(ch){
  return null;
 }
 async function getGuide(ch){if(guideCache.has(ch))return guideCache.get(ch);
- // オンラインの筆画資料を優先。接続できない場合は簡易練習用の代表字モデル。
- let d=DEMO[ch]?{paths:DEMO[ch],source:'簡易筆画モデル'}:await fetchGuides(ch);
+ // オンラインの筆画資料（部品情報つき）を優先。接続できない場合は簡易練習用の代表字モデル。
+ let d=await fetchGuides(ch);
+ if(!d&&DEMO[ch])d={paths:DEMO[ch],parts:DEMO_PARTS[ch]||null,source:'簡易筆画モデル'};
  guideCache.set(ch,d || null);return d;
 }
 function avg(p){return p.reduce((a,c)=>[a[0]+c[0],a[1]+c[1]],[0,0]).map(x=>x/p.length)}
@@ -451,7 +452,7 @@ function setScore(score){
 }
 function presentOutline(r){
  setScore(r.score);
- el('guideNote').textContent='※ 形だけの かんたんチェックです。筆画の資料がないため、はじまり・おわりの点は出しません。';
+ el('guideNote').textContent='※ 形だけの かんたんチェックです。';
  const a=r.place.own,b=r.place.ideal;
  const aw=a.box[2]-a.box[0],ah=a.box[3]-a.box[1],bw=b.box[2]-b.box[0],bh=b.box[3]-b.box[1];
  const tips=[
@@ -469,11 +470,11 @@ function presentOutline(r){
 function present(res,source){
  setScore(res.score);
  const ranked=CRITERIA.map(([key,_name,weight])=>({key,weight,rate:res.scores[key],lost:weight*(100-res.scores[key])/100})).sort((a,b)=>b.lost-a.lost);
- // 始点・終点はすでに見本の印で確認できるので、定型アドバイスの対象から外す。
+ // 始点・終点は定型アドバイスの対象から外し、他の直しどころを優先する。
  const recommended=ranked.filter(x=>x.key!=='endpoints'&&x.rate<88).slice(0,2);
  if(!recommended.length){el('adviceMain').textContent='おてほんの かたちと よく そろったね！';el('adviceSub').textContent='長い線と 短い線を いしきして、つぎの 字にも ちょうせんしよう。';}
  else{el('adviceMain').textContent=adviceFor(recommended[0].key,res);el('adviceSub').textContent=recommended[1]?adviceFor(recommended[1].key,res):'線の むきや ながさを いしきして かこう。';}
- el('guideNote').textContent=(source==='簡易筆画モデル'?'※ はじめ・おわりの点は「最初と最後の点を出す」ボタンを おすと 出るよ。点の位置と さいてんは、かんたんな 練習用モデルによる めやすです。':'※ はじめ・おわりの点は「最初と最後の点を出す」ボタンを おすと 出るよ。点の位置は、筆画データを 文字の線の上に あわせた めやすです。')+(shownPartBoxes?' 緑の わくは、部首などの 部品の まとまりだよ。':'');
+ el('guideNote').textContent=(source==='簡易筆画モデル'?'※ さいてんは、かんたんな 練習用モデルによる めやすです。':'※ 筆画データを もとに さいてんしています。')+(shownPartBoxes?' 緑の わくは、部首などの 部品の まとまりだよ。':'');
  const rows=el('detailRows');rows.replaceChildren();for(const [key,label,weight] of CRITERIA){const row=document.createElement('div');row.className='detail-row';const name=document.createElement('span'),points=document.createElement('span');name.textContent=label;points.textContent=(weight*res.scores[key]/100).toFixed(1)+' / '+weight+'点';row.append(name,points);rows.append(row)}
  show('result',true);
 }
@@ -486,16 +487,16 @@ el('judgeBtn').addEventListener('click',async()=>{
   const payload=await getGuide(selected);
   if(!payload){
    const r=compareOutline();if(!r){status('マスに 字を かいてね。');return}
-   shownGuides=null;shownPartBoxes=null;visible=true;showPoints=false;drawOverlay();show('toggleBtn',true);show('pointsBtn',false);
-   el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',false);
+   shownGuides=null;shownPartBoxes=null;visible=true;drawOverlay();show('toggleBtn',true);
+   el('toggleBtn').textContent='おてほんを かくす';
    presentOutline(r);status('「'+selected+'」を くらべたよ。かたちの かんたんチェックが できたよ。');return;
   }
   const guides=markersOnPrintedGlyph(alignToFont(payload.paths)),r=compare(guides);
   if(!r){status('マスに 字を かいてね。');return}
-  shownGuides=guides;shownPartBoxes=payload.parts?computePartBoxes(guides,payload.parts):null;visible=true;showPoints=false;el('pointsBtn').setAttribute('aria-pressed','false');drawOverlay();show('toggleBtn',true);show('pointsBtn',true);
-  el('toggleBtn').textContent='おてほんを かくす';show('markerLegend',false);
+  shownGuides=guides;shownPartBoxes=payload.parts?computePartBoxes(guides,payload.parts):null;visible=true;drawOverlay();show('toggleBtn',true);
+  el('toggleBtn').textContent='おてほんを かくす';
   present(r,payload.source);status('「'+selected+'」を くらべたよ。いちばん なおしたい ところを みてね。');
- }catch(e){console.error(e);try{if(!refCanvas)refCanvas=makeReference(selected);const r=compareOutline();if(r){shownGuides=null;shownPartBoxes=null;visible=true;showPoints=false;drawOverlay();show('toggleBtn',true);show('pointsBtn',false);presentOutline(r);status('かたちを くらべたよ。');}else status('マスの なかに かいてね。')}catch(_err){status('さいてんできませんでした。ページを ひらきなおしてね。')}}
+ }catch(e){console.error(e);try{if(!refCanvas)refCanvas=makeReference(selected);const r=compareOutline();if(r){shownGuides=null;shownPartBoxes=null;visible=true;drawOverlay();show('toggleBtn',true);presentOutline(r);status('かたちを くらべたよ。');}else status('マスの なかに かいてね。')}catch(_err){status('さいてんできませんでした。ページを ひらきなおしてね。')}}
  finally{btn.disabled=false;btn.textContent='おてほんと かさねて ％を みる'}
 });
 renderChoices();setupFont().then(()=>status('漢字を えらんで マスに かいてね。'));
